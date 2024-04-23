@@ -2,24 +2,22 @@ package main
 
 import (
 	"fmt"
-	"log"
+	_ "log"
 	"net/http"
+	_ "os"
+
+	"webScraper/controller"
+
+	"webScraper/models"
+
+	"github.com/gocolly/colly"
 )
 
-type Data struct {
-	lines      []interface{} // could be paragraphs, headings or links
-	photos     []interface{} // pics & stuff
-	webFormat  []interface{} // JSON or XML format
-	webDocs    []interface{} // PDFs, Docs, Word files
-	multiMedia []interface{} // videos, audio
-
-}
-
-type userPreference struct {
-	searchFormat []interface{}
-	URL          string
-	filter       []interface{}
-}
+// type userPreference struct {
+// 	searchFormat []string
+// 	URL          string
+// 	filter       []interface{}
+// }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
@@ -27,11 +25,39 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	userPr := userPreference{}
+	url := "https://webscraper.io/test-sites/e-commerce/allinone"
 
-	userPr.URL = "https://www.zoomit.ir"
+	var collector = colly.NewCollector()
 
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	collector.OnRequest(func(r *colly.Request) {
+		fmt.Printf("Visiting %v\n", r.URL)
+	})
+
+	collector.OnResponse(func(r *colly.Response) {
+		fmt.Printf("Got a response from %v\n", r.Request.URL)
+	})
+
+	collector.OnError(func(r *colly.Response, e error) {
+		fmt.Printf("An error occurred: %v\n", e)
+	})
+
+	userPref := &models.UserPreference{
+		SearchFormat: []string{"paragraphs"},
+		URL:          url,
+		Filter:       nil,
+	}
+
+	controller.OnHTMLParagraphs(collector, userPref)
+
+	// collector.OnHTML("img", func(e *colly.HTMLElement) {
+	// 	if contains(userPref.searchFormat, "images") {
+	// 		fmt.Printf("\n%v\n", e.Attr("src"))
+	// 	}
+	// })
+
+	collector.Visit(url)
+
+	// http.HandleFunc("/", handler)
+	// log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
