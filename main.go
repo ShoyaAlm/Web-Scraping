@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	_ "fmt"
 	_ "log"
 	"net/http"
+	_ "net/http"
 	_ "os"
 
 	"webScraper/controller"
@@ -42,18 +44,12 @@ func main() {
 	})
 
 	userPref := &models.UserPreference{
-		SearchFormat: []string{"paragraphs"},
+		SearchFormat: []string{"image-types"},
 		URL:          url,
 		Filter:       nil,
 	}
 
-	controller.OnHTMLParagraphs(collector, userPref)
-
-	// collector.OnHTML("img", func(e *colly.HTMLElement) {
-	// 	if contains(userPref.searchFormat, "images") {
-	// 		fmt.Printf("\n%v\n", e.Attr("src"))
-	// 	}
-	// })
+	controller.OnHTMLImageFileTypes(collector, userPref)
 
 	collector.Visit(url)
 

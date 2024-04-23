@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-
 	"webScraper/models"
 
 	"github.com/gocolly/colly"
