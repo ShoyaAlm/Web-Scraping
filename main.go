@@ -29,6 +29,7 @@ func main() {
 
 	url := "https://webscraper.io/test-sites/e-commerce/allinone"
 
+	// url := "https://www.jobstreet.vn/j?sp=search&q=C%C3%B4ng+ngh%E1%BB%87+th%C3%B4ng+tin&l="
 	var collector = colly.NewCollector()
 
 	collector.OnRequest(func(r *colly.Request) {
@@ -44,12 +45,18 @@ func main() {
 	})
 
 	userPref := &models.UserPreference{
-		SearchFormat: []string{"image-types"},
+		SearchFormat: []string{"links", "paragraphs"},
 		URL:          url,
 		Filter:       nil,
 	}
 
-	controller.OnHTMLImageFileTypes(collector, userPref)
+	// controller.OnHTMLWebFormatJSON(collector, userPref)
+
+	controller.OnHTMLTables(collector, userPref)
+
+	controller.OnHTMLPDFDoc(collector, userPref)
+	controller.OnHTMLParagraphs(collector, userPref)
+	controller.OnHTMLLinks(collector, userPref)
 
 	collector.Visit(url)
 
