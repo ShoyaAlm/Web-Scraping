@@ -1,66 +1,109 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	_ "fmt"
+	"log"
 	_ "log"
 	"net/http"
-	_ "net/http"
 	_ "os"
 
 	"webScraper/controller"
-
 	"webScraper/models"
 
+	_ "webScraper/models"
+
 	"github.com/gocolly/colly"
+	_ "github.com/gocolly/colly"
 )
 
-// type userPreference struct {
-// 	searchFormat []string
-// 	URL          string
-// 	filter       []interface{}
-// }
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+func main() {
+	http.Handle("/", http.FileServer(http.Dir("./page")))
+	http.HandleFunc("/submit", handleSubmit)
+	http.ListenAndServe(":3000", nil)
 }
 
-func main() {
-
-	url := "https://webscraper.io/test-sites/e-commerce/allinone"
-
-	// url := "https://www.jobstreet.vn/j?sp=search&q=C%C3%B4ng+ngh%E1%BB%87+th%C3%B4ng+tin&l="
-	var collector = colly.NewCollector()
-
-	collector.OnRequest(func(r *colly.Request) {
-		fmt.Printf("Visiting %v\n", r.URL)
-	})
-
-	collector.OnResponse(func(r *colly.Response) {
-		fmt.Printf("Got a response from %v\n", r.Request.URL)
-	})
-
-	collector.OnError(func(r *colly.Response, e error) {
-		fmt.Printf("An error occurred: %v\n", e)
-	})
-
-	userPref := &models.UserPreference{
-		SearchFormat: []string{"links", "paragraphs"},
-		URL:          url,
-		Filter:       nil,
+func handleSubmit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
 
-	// controller.OnHTMLWebFormatJSON(collector, userPref)
+	var requestData struct {
+		URL          string `json:"url"`
+		Filter       string `json:"filter"`
+		SearchFormat string `json:"searchFormat"`
+	}
 
-	controller.OnHTMLTables(collector, userPref)
+	// url := "https://webscraper.io/test-sites/e-commerce/allinone"
 
-	controller.OnHTMLPDFDoc(collector, userPref)
-	controller.OnHTMLParagraphs(collector, userPref)
-	controller.OnHTMLLinks(collector, userPref)
+	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+		http.Error(w, "Failed to parse from data", http.StatusBadRequest)
+		log.Printf("Error encoding request body: %v", err)
+		log.Printf("requestData: %v", requestData)
+		return
+	}
 
-	collector.Visit(url)
+	filterSlice := []string{requestData.Filter}
 
-	// http.HandleFunc("/", handler)
-	// log.Fatal(http.ListenAndServe(":8080", nil))
+	var searchFormatSlice []string
+
+	if len(requestData.SearchFormat) == 0 {
+		searchFormatSlice = []string{requestData.SearchFormat}
+	} else {
+		searchFormatSlice = append(searchFormatSlice, requestData.SearchFormat)
+	}
+
+	var formData = &models.UserPreference{
+		URL:          requestData.URL,
+		SearchFormat: searchFormatSlice,
+		Filter:       filterSlice,
+	}
+
+	collector := colly.NewCollector()
+
+	var searchFormat string
+
+	if len(requestData.SearchFormat) > 0 {
+		searchFormat = fmt.Sprintf("%v", requestData.SearchFormat[0])
+	}
+	switch searchFormat {
+
+	case "lines":
+		controller.OnHTMLLinks(collector, formData)
+		controller.OnHTMLParagraphs(collector, formData)
+		controller.OnHTMLHeadings(collector, formData)
+
+	case "images":
+		controller.OnHTMLImages(collector, formData)
+		controller.OnHTMLImageFileTypes(collector, formData)
+
+	case "webFormat":
+		controller.OnHTMLWebFormatJSON(collector, formData)
+		controller.OnHTMLWebFormatXML(collector, formData)
+
+	case "webDocs":
+		controller.OnHTMLPDFDoc(collector, formData)
+
+	case "multiMedia":
+		controller.OnHTMLVideo(collector, formData)
+		controller.OnHTMLAudio(collector, formData)
+
+	}
+
+	err := collector.Visit(requestData.URL)
+	if err != nil {
+		log.Printf("Error visiting URL: %v", err)
+		http.Error(w, "Error visiting URL", http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Received form data: %+v", formData)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Form data received successfully"))
 
 }
+
+// url := "https://www.jobstreet.vn/j?sp=search&q=C%C3%B4ng+ngh%E1%BB%87+th%C3%B4ng+tin&l="

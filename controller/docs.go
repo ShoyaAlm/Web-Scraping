@@ -2,6 +2,8 @@ package controller
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 	"webScraper/models"
 
 	"github.com/gocolly/colly"
@@ -11,15 +13,36 @@ func OnHTMLPDFDoc(collector *colly.Collector, userPref *models.UserPreference) {
 
 	collector.OnHTML("a", func(e *colly.HTMLElement) {
 
-		if Contains(userPref.SearchFormat, "documents") {
-			link := e.Attr("href")
-			if isDocument(link) {
-				fmt.Printf("\n%v\n", link)
+		link := e.Attr("href")
+
+		if isDocument(link) {
+			extension := getFileExtension(link)
+
+			switch extension {
+			case ".pdf":
+				if Contains(userPref.SearchFormat, "pdf") {
+					printPDF(link)
+				}
+
+			case ".doc", "docx":
+				if Contains(userPref.SearchFormat, "doc") {
+					printDoc(link)
+				}
+
 			}
+
 		}
 
 	})
 
+}
+
+func printPDF(link string) {
+	fmt.Printf("\n%v\n", link)
+}
+
+func printDoc(link string) {
+	fmt.Printf("\n%v\n", link)
 }
 
 func isDocument(link string) bool {
@@ -34,6 +57,18 @@ func isDocument(link string) bool {
 
 	return false
 }
+
+func getFileExtension(link string) string {
+	ext := filepath.Ext(link)
+	if ext == "" {
+		return ""
+	}
+	return strings.ToLower(ext)
+}
+
+// func endsWith(s, suffix string) bool {
+// 	return strings.HasSuffix(strings.ToLower(s), suffix)
+// }
 
 func OnHTMLTables(collector *colly.Collector, userPref *models.UserPreference) {
 
