@@ -2,20 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	_ "fmt"
 	"log"
-	_ "log"
 	"net/http"
 	_ "os"
 
 	"webScraper/controller"
 	"webScraper/models"
 
-	_ "webScraper/models"
-
 	"github.com/gocolly/colly"
-	_ "github.com/gocolly/colly"
 )
 
 func main() {
@@ -41,7 +35,6 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
 		http.Error(w, "Failed to parse from data", http.StatusBadRequest)
 		log.Printf("Error encoding request body: %v", err)
-		log.Printf("requestData: %v", requestData)
 		return
 	}
 
@@ -63,12 +56,7 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	collector := colly.NewCollector()
 
-	var searchFormat string
-
-	if len(requestData.SearchFormat) > 0 {
-		searchFormat = fmt.Sprintf("%v", requestData.SearchFormat[0])
-	}
-	switch searchFormat {
+	switch formData.SearchFormat[0] {
 
 	case "lines":
 		controller.OnHTMLLinks(collector, formData)
