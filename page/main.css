@@ -70,3 +70,70 @@ label {
     display: none;
 }
 
+
+/* Custom select wrapper */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 200px; /* Adjust width as needed */
+    margin-bottom: 10px; /* Add some space between elements */
+}
+
+/* Custom select dropdown */
+#custom-select {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Remove default arrow for Safari */
+    background-color: #f7f7f7; /* Light gray background */
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* Custom select dropdown arrow */
+.custom-select-wrapper::after {
+    content: '\25BC'; /* Unicode for down arrow */
+    font-size: 16px;
+    color: #666;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+}
+
+/* Hover effect */
+#custom-select:hover,
+#custom-select:focus {
+    background-color: #e0e0e0;
+    border-color: #999; /* Darken border on hover */
+}
+
+/* Selected option style */
+#custom-select option:checked {
+    background-color: #007bff; /* Blue */
+    color: #fff; /* White */
+}
+
+/* Style optgroup labels */
+optgroup {
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #ccc; /* Add a separator line between groups */
+    padding: 5px 0;
+}
+
+/* Style options */
+option {
+    padding: 10px 15px;
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Hover effect on options */
+option:hover {
+    background-color: #f0f0f0;
+    cursor: pointer; /* Show pointer cursor on hover */
+}

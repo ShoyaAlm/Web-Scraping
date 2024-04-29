@@ -15,20 +15,35 @@
             <h2 id="title">Web scraper</h2>
 
             <input type="text" placeholder="URL" id="urlInput">
-            <!-- <div class="search-container">
-                <label for="searchFormatInput">Select Search Format:</label>
-                <select id="searchFormatInput" class="search-format">
-                    <option value="">Select...</option>
-                    <option value="lines">Lines</option>
-                    <option value="images">Images</option>
-                    <option value="webFormat">Web Format</option>
-                    <option value="webDocs">Web Docs</option>
-                    <option value="multiMedia">MultiMedia</option>
-                </select>
-                <select id="subOptionInput" class="sub-option" style="display: none;"></select>
-            </div> -->
-            
-            <input type="text" placeholder="searchFormat" id="searchFormatInput">
+
+            <div class="custom-select-wrapper">
+
+            <select id="custom-select">
+                <optgroup label="Lines">
+                    <option>Link</option>
+                    <option>Heading</option>
+                    <option>Paragraph</option>
+                </optgroup>
+                <optgroup label="Images">
+                    <option>URL</option>
+                </optgroup>
+                <optgroup label="Web Format">
+                    <option>JSON</option>
+                    <option>XML</option>
+                </optgroup>
+                <optgroup label="Web Docs">
+                    <option>PDF</option>
+                    <option>Word</option>
+                </optgroup>
+                <optgroup label="Multi Media">
+                    <option>Video</option>
+                    <option>Audio</option>
+                </optgroup>
+            </select>
+        
+            </div>
+
+
 
             <input type="text" placeholder="filter" id="filterInput">
 

@@ -2,13 +2,13 @@
 function processing () {
 
     var url = document.getElementById('urlInput').value
-    let searchFormat = document.getElementById('searchFormatInput').value
-    let filter = document.getElementById('filterInput').value
+    var searchFormat = document.getElementById('custom-select').value
+    var filter = document.getElementById('filterInput').value
 
 
     console.log("URL: ", url);
     console.log("searchFormat: ", searchFormat);
-    console.log("filter: ", filter);
+    console.log("filter: ", filter); // could be limit, sorting or date range(starting from, or between dates of...)
 
     fetch('http://localhost:3000/submit', {
         method: 'POST',

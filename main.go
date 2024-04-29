@@ -58,27 +58,44 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	switch formData.SearchFormat[0] {
 
-	case "lines":
+	case "Link":
 		controller.OnHTMLLinks(collector, formData)
-		controller.OnHTMLParagraphs(collector, formData)
+
+	case "Heading":
 		controller.OnHTMLHeadings(collector, formData)
 
-	case "images":
+	case "Paragraph":
+		controller.OnHTMLParagraphs(collector, formData)
+
+	case "URL":
 		controller.OnHTMLImages(collector, formData)
 		controller.OnHTMLImageFileTypes(collector, formData)
 
-	case "webFormat":
+	case "JSON":
 		controller.OnHTMLWebFormatJSON(collector, formData)
+
+	case "XML":
 		controller.OnHTMLWebFormatXML(collector, formData)
 
-	case "webDocs":
+	case "PDF", "Word":
 		controller.OnHTMLPDFDoc(collector, formData)
 
-	case "multiMedia":
+	case "Video":
 		controller.OnHTMLVideo(collector, formData)
+
+	case "Audio":
 		controller.OnHTMLAudio(collector, formData)
 
 	}
+
+	// var limit int
+
+	// switch formData.Filter[0] {
+	// case "limit":
+	// 	limit = 10
+	// default:
+	// 	limit = -1
+	// }
 
 	err := collector.Visit(requestData.URL)
 	if err != nil {
