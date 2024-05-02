@@ -14,6 +14,7 @@ func OnHTMLLinks(collector *colly.Collector, userPref *models.UserPreference) {
 	collector.OnHTML("a", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		links = append(links, link)
+
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {
@@ -28,9 +29,13 @@ func OnHTMLLinks(collector *colly.Collector, userPref *models.UserPreference) {
 			if link == "" || link == "/" || link == "#" {
 				continue
 			} else {
-				validLinks = append(validLinks, link)
-				if len(validLinks) == 4 {
-					break
+				if isInArray(link, repeatedInfo) {
+					fmt.Printf("\n%v\n", link)
+				}
+				if uniqueLinks(link, links) {
+					validLinks = append(validLinks, link)
+				} else {
+					repeatedInfo = append(repeatedInfo, link)
 				}
 			}
 
@@ -39,12 +44,31 @@ func OnHTMLLinks(collector *colly.Collector, userPref *models.UserPreference) {
 		for _, link := range validLinks {
 			fmt.Printf("\n%v\n", link)
 		}
+
 	})
+
 }
 
 func OnHTMLParagraphs(collector *colly.Collector, userPref *models.UserPreference) {
+
+	var pars []string
+
 	collector.OnHTML("p", func(e *colly.HTMLElement) {
-		fmt.Printf("\n%v\n", e.Text)
+		par := e.Text
+		pars = append(pars, par) // appending paragraphs
+	})
+
+	collector.OnScraped(func(r *colly.Response) {
+		var validPars []string
+
+		for _, par := range pars {
+			validPars = append(validPars, par)
+		}
+
+		for _, par := range validPars {
+			fmt.Printf("\n%v\n", par)
+		}
+
 	})
 }
 
@@ -52,4 +76,34 @@ func OnHTMLHeadings(collector *colly.Collector, userPref *models.UserPreference)
 	collector.OnHTML("h1 h2 h3 h4 h5 h6", func(e *colly.HTMLElement) {
 		fmt.Printf("\n%v\n", e.Text)
 	})
+}
+
+func uniqueLinks(variable string, links []string) bool {
+	var i = 0
+	var isUnique bool
+	for _, link := range links {
+		if link == variable {
+			i++
+		}
+	}
+
+	if i == 1 {
+		isUnique = true
+	} else {
+		isUnique = false
+	}
+
+	return isUnique
+}
+
+var repeatedInfo []string
+
+func isInArray(variable string, infos []string) bool {
+	for _, info := range infos {
+		if info == variable {
+			return true
+		}
+	}
+
+	return false
 }

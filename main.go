@@ -88,23 +88,12 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	// var limit int
-
-	// switch formData.Filter[0] {
-	// case "limit":
-	// 	limit = 10
-	// default:
-	// 	limit = -1
-	// }
-
 	err := collector.Visit(requestData.URL)
 	if err != nil {
 		log.Printf("Error visiting URL: %v", err)
 		http.Error(w, "Error visiting URL", http.StatusBadRequest)
 		return
 	}
-
-	log.Printf("Received form data: %+v", formData)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Form data received successfully"))
