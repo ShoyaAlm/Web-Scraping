@@ -20,14 +20,10 @@ func OnHTMLPDFDoc(collector *colly.Collector, userPref *models.UserPreference) {
 
 			switch extension {
 			case ".pdf":
-				if Contains(userPref.SearchFormat, "pdf") {
-					printPDF(link)
-				}
+				printPDF(link)
 
 			case ".doc", "docx":
-				if Contains(userPref.SearchFormat, "doc") {
-					printDoc(link)
-				}
+				printDoc(link)
 
 			}
 
@@ -66,15 +62,18 @@ func getFileExtension(link string) string {
 	return strings.ToLower(ext)
 }
 
-// func endsWith(s, suffix string) bool {
-// 	return strings.HasSuffix(strings.ToLower(s), suffix)
-// }
-
 func OnHTMLTables(collector *colly.Collector, userPref *models.UserPreference) {
 
+	var tableStrings []string
+
 	collector.OnHTML("table", func(e *colly.HTMLElement) {
-		if Contains(userPref.SearchFormat, "tables") {
-			fmt.Printf("\n%v\n", e.Text)
+		tables := e.Text
+		tableStrings = append(tableStrings, tables)
+	})
+
+	collector.OnScraped(func(r *colly.Response) {
+		for _, table := range tableStrings {
+			fmt.Printf("%v", table)
 		}
 	})
 }

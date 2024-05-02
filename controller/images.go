@@ -8,40 +8,59 @@ import (
 )
 
 func OnHTMLImages(collector *colly.Collector, userPref *models.UserPreference) {
+
+	var imagesURL []string
+
 	collector.OnHTML("img", func(e *colly.HTMLElement) {
-		if Contains(userPref.SearchFormat, "images") {
-			fmt.Printf("\n%v\n", e.Attr("src"))
-		}
+		image := e.Attr("src")
+		imagesURL = append(imagesURL, image)
 	})
+
+	collector.OnScraped(func(r *colly.Response) {
+
+		var validImages []string
+		for _, image := range imagesURL {
+			if uniqueImages(image, imagesURL) {
+				validImages = append(validImages, image)
+
+			} else if IsInArray(image, repeatedImages) == false {
+				fmt.Printf("\n%v\n", image)
+				repeatedImages = append(repeatedImages, image)
+			}
+
+		}
+
+		for _, image := range validImages {
+			fmt.Printf("\n%v\n", image)
+		}
+
+	})
+
 }
 
 func OnHTMLImageAlts(collector *colly.Collector, userPref *models.UserPreference) {
 	collector.OnHTML("img", func(e *colly.HTMLElement) {
-		if Contains(userPref.SearchFormat, "image-alts") {
 
-			caption := e.Attr("alt")
+		caption := e.Attr("alt")
 
-			if caption != "" {
-				fmt.Printf("\n%v\n", caption)
-			}
-
+		if caption != "" {
+			fmt.Printf("\n%v\n", caption)
 		}
+
 	})
 }
 
 func OnHTMLImageFileTypes(collector *colly.Collector, userPref *models.UserPreference) {
 	collector.OnHTML("img", func(e *colly.HTMLElement) {
-		if Contains(userPref.SearchFormat, "image-types") {
 
-			src := e.Attr("src")
+		src := e.Attr("src")
 
-			fileType := getFileType(src)
+		fileType := getFileType(src)
 
-			if fileType != "" {
-				fmt.Printf("\n%v\n", fileType)
-			}
-
+		if fileType != "" {
+			fmt.Printf("\n%v\n", fileType)
 		}
+
 	})
 }
 
@@ -69,4 +88,24 @@ func getFileType(src string) string {
 
 func endsWith(str, suffix string) bool {
 	return len(str) >= len(suffix) && str[len(str)-len(suffix):] == suffix
+}
+
+var repeatedImages []string
+
+func uniqueImages(imageURL string, images []string) bool {
+
+	var i = 0
+
+	for _, image := range images {
+		if image == imageURL {
+			i++
+		}
+	}
+
+	if i == 1 {
+		return true
+	} else {
+		return false
+	}
+
 }

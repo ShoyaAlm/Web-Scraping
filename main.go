@@ -69,7 +69,7 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	case "URL":
 		controller.OnHTMLImages(collector, formData)
-		controller.OnHTMLImageFileTypes(collector, formData)
+		// controller.OnHTMLImageFileTypes(collector, formData)
 
 	case "JSON":
 		controller.OnHTMLWebFormatJSON(collector, formData)
@@ -79,6 +79,9 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	case "PDF", "Word":
 		controller.OnHTMLPDFDoc(collector, formData)
+
+	case "Table":
+		controller.OnHTMLTables(collector, formData)
 
 	case "Video":
 		controller.OnHTMLVideo(collector, formData)
