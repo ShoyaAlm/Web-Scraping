@@ -16,9 +16,9 @@
 
             <input type="text" placeholder="URL" id="urlInput">
 
-            <div class="custom-select-wrapper">
+            <div class="searchFormat-wrapper">
 
-            <select id="custom-select">
+            <select id="searchFormat">
                 <optgroup label="Lines">
                     <option>Link</option>
                     <option>Heading</option>
@@ -45,9 +45,35 @@
             </div>
 
 
+        <div class="sort-limit-wrapper">
 
-            <input type="text" placeholder="filter" id="filterInput">
+            <select name="sorting" id="sort">
 
+                <optgroup label="sorting">
+                    <!-- type of sorting -->
+                    <option>Alphabetical</option>
+
+                    <option>length</option>
+
+                    <option>date</option>
+
+                </optgroup>
+            </select>
+
+            <select name="limiting" id="limit">
+
+                <optgroup label="limiting">
+                    <option value="no">no limit</option>
+                    <option value="yes">limit</option>
+                </optgroup>
+
+            </select>
+        
+            <div id="limitInput" style="display: none;">
+                <label>Number of limitation: <input type="text" id="limitNumber"></label>
+            </div>
+        
+        </div>
             <button type="submit">Search</button>
             
         </form>

@@ -2,20 +2,23 @@
 function processing () {
 
     var url = document.getElementById('urlInput').value
-    var searchFormat = document.getElementById('custom-select').value
-    var filter = document.getElementById('filterInput').value
+    var searchFormat = document.getElementById('searchFormat').value
+    // var filter = document.getElementById('filterInput').value
 
-
-    console.log("URL: ", url);
-    console.log("searchFormat: ", searchFormat);
-    console.log("filter: ", filter); // could be limit, sorting or date range(starting from, or between dates of...)
-
+    var limit = document.getElementById('limitNumber').value
+    
+    if (limit != "") {
+        limit = Number(limit)
+    } else {
+        limit = 0
+    }
+    
     fetch('http://localhost:3000/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ url, filter, searchFormat })
+        body: JSON.stringify({ url, searchFormat, limit })
     })
     .then(response => {
         if (!response.ok) {
@@ -33,6 +36,16 @@ function processing () {
 
 }
 
+
+document.getElementById('limit').addEventListener('change', (e) => {
+    var limitInput = document.getElementById("limitInput")
+    var selectedOption = e.target.value
+    if (selectedOption == "yes") {
+        limitInput.style.display = "block";
+    } else {
+        limitInput.style.display = "none";
+    }
+})
 
 document.getElementById('myForm').addEventListener('submit', (e) => {
     e.preventDefault(); 

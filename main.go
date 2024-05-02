@@ -25,12 +25,11 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var requestData struct {
-		URL          string `json:"url"`
-		Filter       string `json:"filter"`
+		URL string `json:"url"`
+		// Filter       string `json:"filter"`
 		SearchFormat string `json:"searchFormat"`
+		Limit        int    `json:"limit"`
 	}
-
-	// url := "https://webscraper.io/test-sites/e-commerce/allinone"
 
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
 		http.Error(w, "Failed to parse from data", http.StatusBadRequest)
@@ -38,7 +37,7 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filterSlice := []string{requestData.Filter}
+	// filterSlice := []string{requestData.Filter}
 
 	var searchFormatSlice []string
 
@@ -51,7 +50,8 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 	var formData = &models.UserPreference{
 		URL:          requestData.URL,
 		SearchFormat: searchFormatSlice,
-		Filter:       filterSlice,
+		// Filter:       filterSlice,
+		Limit: requestData.Limit,
 	}
 
 	collector := colly.NewCollector()

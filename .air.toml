@@ -1,9 +1,0 @@
-# .air.toml
-root = "." # The root directory of your project
-
-[build]
-cmd = "go build -o ./tmp/main ./main.go" # The build command for your Go application
-watch = ["./cmd", "./internal"] # The directories to watch for changes
-
-[run]
-exec = "./tmp/main" # The path to the built executable

@@ -32,12 +32,14 @@ func OnHTMLLinks(collector *colly.Collector, userPref *models.UserPreference) {
 				if uniqueLinks(link, links) {
 					validLinks = append(validLinks, link)
 				} else if IsInArray(link, repeatedInfo) == false {
-					fmt.Printf("\n%v\n", link)
+					validLinks = append(validLinks, link)
 					repeatedInfo = append(repeatedInfo, link)
 				}
 			}
 
 		}
+
+		validLinks = LimitedOutput(userPref.Limit, validLinks)
 
 		for _, link := range validLinks {
 			fmt.Printf("\n%v\n", link)
@@ -95,13 +97,3 @@ func uniqueLinks(variable string, links []string) bool {
 }
 
 var repeatedInfo []string
-
-func IsInArray(variable string, infos []string) bool {
-	for _, info := range infos {
-		if info == variable {
-			return true
-		}
-	}
-
-	return false
-}
