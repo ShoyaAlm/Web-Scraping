@@ -25,9 +25,9 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var requestData struct {
-		URL string `json:"url"`
-		// Filter       string `json:"filter"`
+		URL          string `json:"url"`
 		SearchFormat string `json:"searchFormat"`
+		Sort         string `json:"sort"`
 		Limit        int    `json:"limit"`
 	}
 
@@ -36,8 +36,6 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error encoding request body: %v", err)
 		return
 	}
-
-	// filterSlice := []string{requestData.Filter}
 
 	var searchFormatSlice []string
 
@@ -52,6 +50,7 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 		SearchFormat: searchFormatSlice,
 		// Filter:       filterSlice,
 		Limit: requestData.Limit,
+		Sort:  requestData.Sort,
 	}
 
 	collector := colly.NewCollector()

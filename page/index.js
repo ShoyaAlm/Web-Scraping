@@ -3,10 +3,13 @@ function processing () {
 
     var url = document.getElementById('urlInput').value
     var searchFormat = document.getElementById('searchFormat').value
-    // var filter = document.getElementById('filterInput').value
+
 
     var limit = document.getElementById('limitNumber').value
-    
+    var sort = document.getElementById('sort').value
+
+    console.log("sort", sort); // type is string
+
     if (limit != "") {
         limit = Number(limit)
     } else {
@@ -18,7 +21,7 @@ function processing () {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ url, searchFormat, limit })
+        body: JSON.stringify({ url, searchFormat, limit, sort })
     })
     .then(response => {
         if (!response.ok) {
