@@ -41,7 +41,9 @@ func OnHTMLLinks(collector *colly.Collector, userPref *models.UserPreference) {
 
 		validLinks = SortInfo(validLinks, userPref)
 
-		validLinks = LimitedOutput(userPref.Limit, validLinks)
+		if userPref.Limit != 0 {
+			validLinks = LimitedOutput(userPref.Limit, validLinks)
+		}
 
 		for _, link := range validLinks {
 			fmt.Printf("\n%v\n", link)
